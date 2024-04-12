@@ -63,6 +63,9 @@ def train(cfg):
 
     model.cuda()
     model.train()
+    print(model)
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print("n_params: {:,}".format(n_params))
 
     train_loader = datasets.fetch_dataloader(cfg)
     optimizer, scheduler = fetch_optimizer(model, cfg.trainer)
@@ -75,8 +78,8 @@ def train(cfg):
 
     should_keep_training = True
     while should_keep_training:
-
         for i_batch, data_blob in enumerate(train_loader):
+            print(total_steps, i_batch, len(data_blob))
             optimizer.zero_grad()
             image1, image2, flow, valid = [x.cuda() for x in data_blob]
 
@@ -119,12 +122,13 @@ def train(cfg):
                 model.train()
             
             total_steps += 1
-
             if total_steps > cfg.trainer.num_steps:
                 should_keep_training = False
                 break
+        break
+        
 
-    logger.close()
+    # logger.close()
     PATH = cfg.log_dir + '/final'
     torch.save(model.state_dict(), PATH)
 
@@ -157,6 +161,7 @@ if __name__ == '__main__':
     cfg = get_cfg()
     cfg.update(vars(args))
     process_cfg(cfg)
+
     loguru_logger.add(str(Path(cfg.log_dir) / 'log.txt'), encoding="utf8")
     loguru_logger.info(cfg)
 

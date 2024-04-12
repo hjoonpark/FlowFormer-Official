@@ -33,6 +33,7 @@ class twins_svt_large(nn.Module):
             if i == layer-1:
                 break
         
+        print("forward")
         return x
 
     def compute_params(self, layer=2):

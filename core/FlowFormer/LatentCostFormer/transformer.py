@@ -23,9 +23,11 @@ class FlowFormer(nn.Module):
 
         self.memory_encoder = MemoryEncoder(cfg)
         self.memory_decoder = MemoryDecoder(cfg)
+
         if cfg.cnet == 'twins':
             self.context_encoder = twins_svt_large(pretrained=self.cfg.pretrain)
         elif cfg.cnet == 'basicencoder':
+            assert 0
             self.context_encoder = BasicEncoder(output_dim=256, norm_fn='instance')
 
 
@@ -37,6 +39,7 @@ class FlowFormer(nn.Module):
         data = {}
 
         if self.cfg.context_concat:
+            assert False
             context = self.context_encoder(torch.cat([image1, image2], dim=1))
         else:
             context = self.context_encoder(image1)
