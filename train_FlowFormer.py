@@ -48,7 +48,9 @@ except:
             pass
 
 #torch.autograd.set_detect_anomaly(True)
+import warnings
 
+warnings.filterwarnings("ignore")
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -63,7 +65,7 @@ def train(cfg):
 
     model.cuda()
     model.train()
-    print(model)
+    # print(model)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print("n_params: {:,}".format(n_params))
 
@@ -89,7 +91,9 @@ def train(cfg):
                 image2 = (image2 + stdv * torch.randn(*image2.shape).cuda()).clamp(0.0, 255.0)
 
             output = {}
+            print("="*100)
             flow_predictions = model(image1, image2, output)
+            print("*"*100)
             loss, metrics = sequence_loss(flow_predictions, flow, valid, cfg)
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
@@ -120,7 +124,7 @@ def train(cfg):
                 logger.write_dict(results)
                 
                 model.train()
-            
+            break
             total_steps += 1
             if total_steps > cfg.trainer.num_steps:
                 should_keep_training = False

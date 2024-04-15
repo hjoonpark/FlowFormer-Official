@@ -315,6 +315,7 @@ class MemoryEncoder(nn.Module):
         if cfg.fnet == 'twins':
             self.feat_encoder = twins_svt_large(pretrained=self.cfg.pretrain)
         elif cfg.fnet == 'basicencoder':
+            assert False
             self.feat_encoder = BasicEncoder(output_dim=256, norm_fn='instance')
         else:
             exit()
@@ -342,8 +343,12 @@ class MemoryEncoder(nn.Module):
         # feat_t = self.channel_convertor(feat_t)
 
         imgs = torch.cat([img1, img2], dim=0)
+        print("MemoryEncoder forward")
+        print("  input={}".format(imgs.shape))
         feats = self.feat_encoder(imgs)
+        print("  feats={}".format(feats.shape))
         feats = self.channel_convertor(feats)
+        print("  feats={}".format(feats.shape))
         B = feats.shape[0] // 2
 
         feat_s = feats[:B]
@@ -353,6 +358,7 @@ class MemoryEncoder(nn.Module):
         size = (H, W)
 
         if self.cfg.feat_cross_attn:
+            assert False
             feat_s = feat_s.flatten(2).transpose(1, 2)
             feat_t = feat_t.flatten(2).transpose(1, 2)
 
@@ -363,6 +369,8 @@ class MemoryEncoder(nn.Module):
             feat_t = feat_t.reshape(B, *size, -1).permute(0, 3, 1, 2).contiguous()
 
         cost_volume = self.corr(feat_s, feat_t)
+        print("cost_volume={}".format(cost_volume.shape))
         x = self.cost_perceiver_encoder(cost_volume, data, context)
+        print("x={}".format(x.shape))
 
         return x
