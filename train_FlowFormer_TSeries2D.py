@@ -20,7 +20,7 @@ from core import optimizer
 import evaluate_FlowFormer as evaluate
 import evaluate_FlowFormer_tile as evaluate_tile
 import core.datasets as datasets
-from core.loss import sequence_loss
+from core.loss import sequence_loss_TSeries2D
 from core.optimizer import fetch_optimizer
 from core.utils.misc import process_cfg
 from loguru import logger as loguru_logger
@@ -81,7 +81,6 @@ def train(cfg):
     should_keep_training = True
     while should_keep_training:
         for i_batch, data_blob in enumerate(train_loader):
-            print(total_steps, i_batch, len(data_blob))
             optimizer.zero_grad()
             image1, image2, flow, valid = [x.cuda() for x in data_blob]
 
@@ -91,10 +90,9 @@ def train(cfg):
                 image2 = (image2 + stdv * torch.randn(*image2.shape).cuda()).clamp(0.0, 255.0)
 
             output = {}
-            print("="*100)
             flow_predictions = model(image1, image2, output)
-            print("*"*100)
-            loss, metrics = sequence_loss(flow_predictions, flow, valid, cfg)
+            
+            loss, metrics = sequence_loss_TSeries2D(flow_predictions, flow, valid, cfg)
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.trainer.clip)
@@ -107,7 +105,6 @@ def train(cfg):
             logger.push(metrics)
 
             ### change evaluate to functions
-
             if total_steps % cfg.val_freq == cfg.val_freq - 1:
                 PATH = '%s/%d_%s.pth' % (cfg.log_dir, total_steps+1, cfg.name)
                 # torch.save(model.state_dict(), PATH)
@@ -124,12 +121,12 @@ def train(cfg):
                 logger.write_dict(results)
                 
                 model.train()
-            break
+            # break
             total_steps += 1
             if total_steps > cfg.trainer.num_steps:
                 should_keep_training = False
-                break
-        break
+                # break
+        # break
         
 
     # logger.close()

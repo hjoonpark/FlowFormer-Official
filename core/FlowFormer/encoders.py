@@ -17,7 +17,7 @@ class twins_svt_large(nn.Module):
         del self.svt.pos_block[2]
     
     def forward(self, x, data=None, layer=2):
-        print("twins_svt: input x={}".format(x.shape))
+        # print("JP twins_svt: input x={}".format(x.shape))
         B = x.shape[0]
         for i, (embed, drop, blocks, pos_blk) in enumerate(
             zip(self.svt.patch_embeds, self.svt.pos_drops, self.svt.blocks, self.svt.pos_block)):
@@ -36,7 +36,7 @@ class twins_svt_large(nn.Module):
             
             if i == layer-1:
                 break
-        print("          output x={}".format(x.shape))
+        # print("JP          output x={}".format(x.shape))
         return x
 
     def compute_params(self, layer=2):

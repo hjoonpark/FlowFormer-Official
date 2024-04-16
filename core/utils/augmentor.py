@@ -38,7 +38,6 @@ class FlowAugmentor:
 
     def color_transform(self, img1, img2):
         """ Photometric augmentation """
-
         # asymmetric
         if np.random.rand() < self.asymmetric_color_aug_prob:
             img1 = np.array(self.photo_aug(Image.fromarray(img1)), dtype=np.uint8)

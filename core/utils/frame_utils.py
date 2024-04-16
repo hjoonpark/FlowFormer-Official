@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from os.path import *
-import re
+import re, os
 
 import cv2
 cv2.setNumThreads(0)
@@ -100,7 +100,15 @@ def writeFlow(filename,uv,v=None):
 
 
 def readFlowKITTI(filename):
-    flow = cv2.imread(filename, cv2.IMREAD_ANYDEPTH|cv2.IMREAD_COLOR)
+    exi = os.path.exists(filename)
+    # flow = cv2.imread(filename, cv2.IMREAD_ANYDEPTH|cv2.IMREAD_COLOR)
+    flow = np.load(filename).astype(np.float32)
+    # if not exi:
+    #     print("Error: ", filename)
+    #     assert 0
+    # else:
+    #     print(flow.shape, flow.min(), flow.max(), flow.dtype)
+    #     assert 0
     flow = flow[:,:,::-1].astype(np.float32)
     flow, valid = flow[:, :, :2], flow[:, :, 2]
     flow = (flow - 2**15) / 64.0
@@ -134,4 +142,8 @@ def read_gen(file_name, pil=False):
             return flow
         else:
             return flow[:, :, :-1]
+    elif ext == ".npy":
+        flow = np.load(file_name).astype(np.float32)
+        return flow
+    assert False, "Check the extension of the file!"
     return []

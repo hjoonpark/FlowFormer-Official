@@ -81,14 +81,13 @@ class FlowDataset(data.Dataset):
         img1 = torch.from_numpy(img1).permute(2, 0, 1).float()
         img2 = torch.from_numpy(img2).permute(2, 0, 1).float()
         flow = torch.from_numpy(flow).permute(2, 0, 1).float()
-
+        
         if valid is not None:
             valid = torch.from_numpy(valid)
         else:
             valid = (flow[0].abs() < 1000) & (flow[1].abs() < 1000)
-
+            
         return img1, img2, flow, valid.float()
-
 
     def __rmul__(self, v):
         self.flow_list = v * self.flow_list
@@ -136,7 +135,6 @@ class FlyingChairs(FlowDataset):
                 self.flow_list += [ flows[i] ]
                 self.image_list += [ [images[2*i], images[2*i+1]] ]
 
-
 class FlyingThings3D(FlowDataset):
     def __init__(self, aug_params=None, root='datasets/FlyingThings3D', dstype='frames_cleanpass', split='training'):
         super(FlyingThings3D, self).__init__(aug_params)
@@ -160,7 +158,25 @@ class FlyingThings3D(FlowDataset):
                         elif direction == 'into_past':
                             self.image_list += [ [images[i+1], images[i]] ]
                             self.flow_list += [ flows[i+1] ]
-      
+
+class TSeries2D(FlowDataset):
+    def __init__(self, aug_params=None, split='training', root='datasets/TSeries2D/TSeries-01182024-1450-023'):
+        super(TSeries2D, self).__init__(aug_params, sparse=True)
+        if split == 'testing':
+            self.is_test = True
+
+        images = sorted(glob(os.path.join(root, "image", "*.npy")))
+        images2 = images[1:]
+        images1 = images[:-1]
+        
+        for img1, img2 in zip(images1, images2):
+            frame_id = int(img1.split('/')[-1].split(".npy")[0].split("_")[-1])
+            self.extra_info += [ [frame_id] ]
+            self.image_list += [ [img1, img2] ]
+
+        if split == 'training':
+            self.flow_list = sorted(glob(os.path.join(root, "flow", "*.npy")))
+            assert len(self.flow_list) == len(images2)
 
 class KITTI(FlowDataset):
     def __init__(self, aug_params=None, split='training', root='datasets/KITTI'):
@@ -180,7 +196,6 @@ class KITTI(FlowDataset):
         if split == 'training':
             self.flow_list = sorted(glob(osp.join(root, 'flow_occ/*_10.png')))
 
-
 class HD1K(FlowDataset):
     def __init__(self, aug_params=None, root='datasets/HD1k'):
         super(HD1K, self).__init__(aug_params, sparse=True)
@@ -198,7 +213,6 @@ class HD1K(FlowDataset):
                 self.image_list += [ [images[i], images[i+1]] ]
 
             seq_ix += 1
-
 
 def fetch_dataloader(args, TRAIN_DS='C+T+K+S+H'):
     """ Create the data loader for the corresponding trainign set """
@@ -231,6 +245,10 @@ def fetch_dataloader(args, TRAIN_DS='C+T+K+S+H'):
     elif args.stage == 'kitti':
         aug_params = {'crop_size': args.image_size, 'min_scale': -0.2, 'max_scale': 0.4, 'do_flip': False}
         train_dataset = KITTI(aug_params, split='training')
+
+    elif args.stage == 'tseries2d':
+        aug_params = {'crop_size': args.image_size, 'min_scale': -0.2, 'max_scale': 0.4, 'do_flip': False}
+        train_dataset = TSeries2D(aug_params, split='training')
 
     train_loader = data.DataLoader(train_dataset, batch_size=args.batch_size, 
         pin_memory=False, shuffle=True, num_workers=128, drop_last=True)

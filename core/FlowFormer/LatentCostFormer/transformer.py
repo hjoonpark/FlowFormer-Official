@@ -43,12 +43,12 @@ class FlowFormer(nn.Module):
             context = self.context_encoder(torch.cat([image1, image2], dim=1))
         else:
             context = self.context_encoder(image1)
-            print("context={}".format(context.shape))
+            # print("JP context={}".format(context.shape))
         cost_memory = self.memory_encoder(image1, image2, data, context)
-        print("cost_memory={}".format(cost_memory.shape))
+        # print("JP cost_memory={}".format(cost_memory.shape))
 
         flow_predictions = self.memory_decoder(cost_memory, context, data, flow_init=flow_init)
-        for i, f in enumerate(flow_predictions):
-            print("  i={} flow_predictions={}".format(i, f.shape))
+        # for i, f in enumerate(flow_predictions):
+            # print("JP  i={} flow_predictions={}".format(i, f.shape))
 
         return flow_predictions
