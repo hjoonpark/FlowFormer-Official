@@ -1,0 +1,73 @@
+2024-04-15 21:53:55.219 | INFO     | __main__:<module>:169 - add_noise: True
+batch_size: 6
+critical_params: []
+gamma: 0.85
+image_size: [64, 64]
+latentcostformer:
+  add_flow_token: True
+  arc_type: transformer
+  cnet: twins
+  context_concat: False
+  cost_encoder_res: True
+  cost_heads_num: 1
+  cost_latent_dim: 128
+  cost_latent_input_dim: 64
+  cost_latent_token_num: 8
+  critical_params: ['cost_heads_num', 'vert_c_dim', 'cnet', 'pretrain', 'add_flow_token', 'encoder_depth', 'gma', 'cost_encoder_res']
+  decoder_depth: 12
+  dropout: 0.0
+  encoder_depth: 3
+  encoder_latent_dim: 256
+  feat_cross_attn: False
+  fnet: twins
+  gma: GMA
+  motion_feature_dim: 209
+  no_sc: False
+  only_global: False
+  patch_embed: single
+  patch_size: 8
+  pe: linear
+  predictor_dim: 128
+  pretrain: True
+  pwc_aug: False
+  query_latent_dim: 64
+  rm_res: True
+  use_mlp: False
+  use_rpe: False
+  vert_c_dim: 64
+  vertical_conv: False
+  vertical_encoder_attn: twins
+log_dir: logs/tseries2d/latentcostformer/cost_heads_num[1]vert_c_dim[64]cnet[twins]pretrain[True]add_flow_token[True]encoder_depth[3]gma[GMA]cost_encoder_res[True]tseries2d(04_15_21_53)
+max_flow: 400
+mixed_precision: False
+model: None
+name: tseries2d
+restore_ckpt: None
+stage: tseries2d
+suffix: tseries2d
+sum_freq: 100
+trainer:
+  adamw_decay: 1e-05
+  anneal_strategy: linear
+  canonical_lr: 0.000125
+  clip: 1.0
+  epsilon: 1e-08
+  num_steps: 50000
+  optimizer: adamw
+  scheduler: OneCycleLR
+transformer: latentcostformer
+val_freq: 499999999
+validation: ['tseries2d']
+2024-04-15 21:54:00.317 | INFO     | __main__:train:60 - Parameter Count: 16168113
+n_params: 16,168,113
+Training with 83 image pairs
+2024-04-15 21:55:07.203 | INFO     | core.utils.logger:_print_training_status:19 - [   100, [9.744408945686901e-06]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 21:56:13.816 | INFO     | core.utils.logger:_print_training_status:19 - [   200, [1.453674121405751e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 21:57:15.890 | INFO     | core.utils.logger:_print_training_status:19 - [   300, [1.9329073482428117e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 21:58:23.966 | INFO     | core.utils.logger:_print_training_status:19 - [   400, [2.412140575079872e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 21:59:32.171 | INFO     | core.utils.logger:_print_training_status:19 - [   500, [2.891373801916933e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 22:00:41.586 | INFO     | core.utils.logger:_print_training_status:19 - [   600, [3.370607028753994e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 22:01:45.635 | INFO     | core.utils.logger:_print_training_status:19 - [   700, [3.849840255591054e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 22:02:56.055 | INFO     | core.utils.logger:_print_training_status:19 - [   800, [4.329073482428115e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 22:04:07.197 | INFO     | core.utils.logger:_print_training_status:19 - [   900, [4.808306709265176e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 
+2024-04-15 22:05:13.383 | INFO     | core.utils.logger:_print_training_status:19 - [  1000, [5.2875399361022365e-05]]        nan,        nan,        nan,        nan,        nan,        nan,        nan, 

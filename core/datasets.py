@@ -55,8 +55,9 @@ class FlowDataset(data.Dataset):
         if self.sparse:
             flow, valid = frame_utils.readFlowKITTI(self.flow_list[index])
         else:
+            assert False
             flow = frame_utils.read_gen(self.flow_list[index])
-
+        print("read:", flow.shape, flow.min(), flow.max())
         img1 = frame_utils.read_gen(self.image_list[index][0])
         img2 = frame_utils.read_gen(self.image_list[index][1])
 
@@ -168,7 +169,7 @@ class TSeries2D(FlowDataset):
         images = sorted(glob(os.path.join(root, "image", "*.npy")))
         images2 = images[1:]
         images1 = images[:-1]
-        
+
         for img1, img2 in zip(images1, images2):
             frame_id = int(img1.split('/')[-1].split(".npy")[0].split("_")[-1])
             self.extra_info += [ [frame_id] ]

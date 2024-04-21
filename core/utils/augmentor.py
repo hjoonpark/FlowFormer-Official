@@ -183,6 +183,9 @@ class SparseFlowAugmentor:
         return img1, img2
 
     def resize_sparse_flow_map(self, flow, valid, fx=1.0, fy=1.0):
+        print("-"*100)
+        print("resize_sparse_flow_map")
+        print("flow:", flow.shape, flow.min(), flow.max(), flow.dtype)
         ht, wd = flow.shape[:2]
         coords = np.meshgrid(np.arange(wd), np.arange(ht))
         coords = np.stack(coords, axis=-1)
@@ -214,9 +217,12 @@ class SparseFlowAugmentor:
         flow_img[yy, xx] = flow1
         valid_img[yy, xx] = 1
 
+        print("flow_img:", flow_img.shape, flow_img.min(), flow_img.max(), flow_img.dtype)
         return flow_img, valid_img
 
     def spatial_transform(self, img1, img2, flow, valid):
+        print()
+        print("flow0:", flow.shape, flow.min(), flow.max(), flow.dtype)
         pad_t = 0
         pad_b = 0
         pad_l = 0
@@ -246,7 +252,7 @@ class SparseFlowAugmentor:
             img1 = cv2.resize(img1, None, fx=scale_x, fy=scale_y, interpolation=cv2.INTER_LINEAR)
             img2 = cv2.resize(img2, None, fx=scale_x, fy=scale_y, interpolation=cv2.INTER_LINEAR)
             flow, valid = self.resize_sparse_flow_map(flow, valid, fx=scale_x, fy=scale_y)
-
+        print("flow1:", flow.shape, flow.min(), flow.max(), flow.dtype)
         if self.do_flip:
             if np.random.rand() < 0.5: # h-flip
                 img1 = img1[:, ::-1]
@@ -256,6 +262,7 @@ class SparseFlowAugmentor:
 
         margin_y = 20
         margin_x = 50
+        print("flow2:", flow.shape, flow.min(), flow.max(), flow.dtype)
 
         y0 = np.random.randint(0, img1.shape[0] - self.crop_size[0] + margin_y)
         x0 = np.random.randint(-margin_x, img1.shape[1] - self.crop_size[1] + margin_x)
@@ -266,6 +273,7 @@ class SparseFlowAugmentor:
         img1 = img1[y0:y0+self.crop_size[0], x0:x0+self.crop_size[1]]
         img2 = img2[y0:y0+self.crop_size[0], x0:x0+self.crop_size[1]]
         flow = flow[y0:y0+self.crop_size[0], x0:x0+self.crop_size[1]]
+        print("flow3:", flow.shape, flow.min(), flow.max(), flow.dtype)
         valid = valid[y0:y0+self.crop_size[0], x0:x0+self.crop_size[1]]
         return img1, img2, flow, valid
 

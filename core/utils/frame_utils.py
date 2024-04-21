@@ -111,7 +111,7 @@ def readFlowKITTI(filename):
     #     assert 0
     flow = flow[:,:,::-1].astype(np.float32)
     flow, valid = flow[:, :, :2], flow[:, :, 2]
-    flow = (flow - 2**15) / 64.0
+    # flow = (flow - 2**15) / 64.0
     return flow, valid
 
 def readDispKITTI(filename):

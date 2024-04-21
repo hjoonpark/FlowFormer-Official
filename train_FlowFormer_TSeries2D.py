@@ -83,6 +83,14 @@ def train(cfg):
         for i_batch, data_blob in enumerate(train_loader):
             optimizer.zero_grad()
             image1, image2, flow, valid = [x.cuda() for x in data_blob]
+            print("-"*100)
+            print(image1.shape, image1.min(), image1.max(), image1.dtype)
+            print(image2.shape, image2.min(), image2.max(), image2.dtype)
+            print(flow.shape, flow.min(), flow.max(), flow.dtype)
+            print(valid.shape, valid.min(), valid.max(), valid.dtype)
+            print()
+            print()
+            print("-"*100)
 
             if cfg.add_noise:
                 stdv = np.random.uniform(0.0, 5.0)
@@ -105,7 +113,7 @@ def train(cfg):
             logger.push(metrics)
 
             ### change evaluate to functions
-            if total_steps % cfg.val_freq == cfg.val_freq - 1:
+            if False and (total_steps % cfg.val_freq == cfg.val_freq - 1):
                 PATH = '%s/%d_%s.pth' % (cfg.log_dir, total_steps+1, cfg.name)
                 # torch.save(model.state_dict(), PATH)
 

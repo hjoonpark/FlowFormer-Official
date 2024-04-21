@@ -7,5 +7,6 @@ rm -rf logs/
 # python -u train_FlowFormer.py --name kitti --stage kitti --validation kitti
 
 # python -u train_FlowFormer.py --name chairs --stage chairs --validation chairs
+# nohup python -u train_FlowFormer_TSeries2D.py --name tseries2d --stage tseries2d --validation tseries2d > log.nohup &
 python -u train_FlowFormer_TSeries2D.py --name tseries2d --stage tseries2d --validation tseries2d
 
